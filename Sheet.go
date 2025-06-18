@@ -31,11 +31,15 @@ func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
 }
 
 
-//func (s Sheet[T,U]) Column(i uint) T{
-//	f:=iter.Seq[iter.Seq[U]T](s.Row)
-//	g:=iter.Seq[T](f)
-//	return T(Ats[U](g,i))
-//}
+func SheetColumn[T Row[U],U any](i uint,s Sheet[T,U]) T{
+	return func(yield func(U) bool) {
+		for r:=range iter.Seq[T](s.Row){
+			if !yield(Row[U](r).At(i-1)){
+				return
+			}
+		}
+	}
+}
 
 type HeadedSheet[U any] struct{
 	Row[string]

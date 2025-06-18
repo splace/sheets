@@ -27,6 +27,12 @@ func ExampleCompareSheets(){
 }
 
 
+func ExampleSheetColumn(){
+	fmt.Printf("%\t\n",SheetColumn(2,NewSheet(NewRow(1,2,3),NewRow(4,5,6))))
+	// Output:
+	// 2	5
+}
+
 func ExampleHeadedSheet(){
 	ht:=HeadedSheet[int]{
 		NewRow("age","height","weight"),
