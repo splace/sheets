@@ -8,7 +8,7 @@ import (
 )
 
 func ExampleRuneSepFunc(){
-	scanner := bufio.NewScanner(strings.NewReader(" 123 , 124 ")) // bufio.Scanner
+	scanner := bufio.NewScanner(strings.NewReader(" 123 , 124\t\t,\t234, ")) // bufio.Scanner
 	scanner.Split(RuneSepFunc(','))
 	for scanner.Scan() {
 		fmt.Printf("%q\n",Trim(scanner.Bytes()))
@@ -16,6 +16,8 @@ func ExampleRuneSepFunc(){
 	// Output:
 	// "123"
 	// "124"
+	// "234"
+	// ""
 }
 
 //func ExampleRuneSepFunc(){
@@ -31,12 +33,12 @@ func ExampleRuneSepFunc(){
 
 // scan csv with comments
 func ExampleBeforeString(){
-	r:=strings.NewReader(" 123 , 124 // comment\n 1,2\n3,  4  // comment") 	
+	r:=strings.NewReader(" 123 , 124 ## comment\n 1,2\n3,  4  ## comment") 	
 	lscanner := bufio.NewScanner(r) // std.lib line scan
 //	lscanner.Split(SepFunc('\n')) 
 	for lscanner.Scan() {
 		cscanner := bufio.NewScanner(bytes.NewReader(lscanner.Bytes()))
-		cscanner.Split(RuneSepFunc(',',BeforeString("//"),Trim))
+		cscanner.Split(RuneSepFunc(',',BeforeString("##"),Trim))
 		fmt.Print("|")
 		for cscanner.Scan() {
 			fmt.Printf("%q\t\t|",cscanner.Text())

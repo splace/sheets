@@ -1,0 +1,3 @@
+age,uint8,yrs
+weight,uint16,g
+height,uint16,mm

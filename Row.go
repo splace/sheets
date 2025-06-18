@@ -11,8 +11,12 @@ func NewRow[T any](rs ...T) Row[T]{
 	return Row[T](slices.Values(rs))
 }
 
-func Compare[T comparable](r1,r2 Row[T]) bool{
-	return true
+func NewReverseRow[T any](rs ...T) Row[T]{
+	return Row[T](Reverse(rs))
+}
+
+func CompareRows[T comparable](r1,r2 Row[T]) bool{
+	return Compare(iter.Seq[T](r1),iter.Seq[T](r2))
 }
 
 func (r Row[T]) Cache() Row[T]{

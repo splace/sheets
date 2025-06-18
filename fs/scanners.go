@@ -126,14 +126,17 @@ type StringScanner struct{
 }
 
 func (s StringScanner) Text() string{
+	if s.stringPostProcessor==nil{
+		return s.Scanner.Text()
+	}
 	return s.stringPostProcessor(s.Scanner.Text())
 }
 
 const commment ="//"
 
-var Lines = RuneSepFunc('\n',CutSuffix("\r"),BeforeString(commment)) 
+var LinesUniversal = RuneSepFunc('\n',CutSuffix("\r"),BeforeString(commment)) 
 
-var LinesUnix = RuneSepFunc('\n',BeforeString(commment)) 
+var Lines = RuneSepFunc('\n',BeforeString(commment)) 
 
 func combine(fs ...func([]byte)[]byte)func([]byte)[]byte{
 	return func(in []byte)[]byte{

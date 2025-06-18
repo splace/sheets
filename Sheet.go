@@ -12,6 +12,25 @@ func NewSheet[T Row[U],U any](rs ...T) Sheet[T,U]{
 	return Sheet[T,U]{Row[T](slices.Values(rs))}
 }
 
+//func CompareSheets[T comparable](s1,s2 Sheet[Row[T],T]) bool{
+//	next1, stop1 := iter.Pull(iter.Seq[T](s1))
+//	next2, stop2 := iter.Pull(iter.Seq[T](s2))
+//	defer stop1()
+//	defer stop2()
+//	for{
+//		r1, ok1 := next1()
+//		r2, ok2 := next2()
+//		if !ok1 && !ok2 {
+//			return true
+//		}
+//		if !ok1 || !ok2 || Compare(r1,r2){
+//			return false
+//		}
+//	}
+//	return true
+//}
+
+
 //func (s Sheet[T,U]) Column(i uint) T{
 //	return T(Ats[U](s.Row,i))
 //}

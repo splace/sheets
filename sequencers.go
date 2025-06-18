@@ -15,6 +15,25 @@ func Concat[T any](rs ...iter.Seq[T]) iter.Seq[T] {
     }
 }
 
+func Compare[T comparable](r1,r2 iter.Seq[T]) bool{
+	next1, stop1 := iter.Pull(r1)
+	next2, stop2 := iter.Pull(r2)
+	defer stop1()
+	defer stop2()
+	for{
+		v1, ok1 := next1()
+		v2, ok2 := next2()
+		if !ok1 && !ok2 {
+			return true
+		}
+		if !ok1 || !ok2 || v1!=v2{
+			return false
+		}
+	}
+	return true
+}
+
+
 // starts after a number of elements from the provided sequence
 func After[T any](ts iter.Seq[T],start uint) iter.Seq[T] {
 	return func(yield func(T) bool) {
@@ -94,3 +113,15 @@ func Select[T any](ts iter.Seq[iter.Seq[T]],i uint,isMatch func(T)bool) iter.Seq
 		}
 	}
 }
+
+func Reverse[Slice ~[]T, T any](s Slice) iter.Seq[T]{
+	return func(yield func(T) bool) {
+		for i:=len(s);i>-0;i--{
+			if !yield(s[i]) {
+				return
+			}
+		}
+	}
+}
+
+

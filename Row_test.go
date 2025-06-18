@@ -36,4 +36,17 @@ func ExampleReverse(){
 	// 7654
 }
 
+func ExampleCompare(){
+	s1,s2:=[]int{0,1,2,3,4,5,6,7,8,9},[]int{0,1,2,3,4,5,6,7,8,9}
+	r1,r2:=NewRow(s1...),NewRow(s2...)
+	fmt.Println(CompareRows(r1,r2))
+	s1[5]+=1
+	fmt.Println(CompareRows(r1,r2))
+	s1[5]=5
+	fmt.Println(CompareRows(r1,r2))
+	// Output:
+	// true
+	// false
+	// true
+}
 
