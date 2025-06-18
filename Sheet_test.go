@@ -15,6 +15,17 @@ func ExampleSheet(){
 	//
 }
 
+func ExampleCompareSheets(){
+	t1:=NewSheet(NewRow(1,2,3),NewRow(4,5,6))
+	t2:=NewSheet(NewRow(1,2,3),NewRow(4,5,6))
+	fmt.Println(CompareSheets(t1,t2))
+	t3:=NewSheet(NewRow(1,2,3),NewRow(4,5,7))
+	fmt.Println(CompareSheets(t1,t3))
+	// Output:
+	// true
+	// false
+}
+
 
 func ExampleHeadedSheet(){
 	ht:=HeadedSheet[int]{
