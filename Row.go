@@ -36,6 +36,22 @@ func (r Row[T]) At(i uint) (d T){
 	return 
 }	
 
+func (r Row[T]) Items(is ...uint) Row[T]{
+	iis:=make([]T,len(is))
+	var ci uint
+	for t:=range r{
+		ci++
+		for ii,i:=range is{
+			if i==ci{
+				iis[ii]=t
+			}
+		}
+	}
+	return NewRow(iis...)
+}	
+
+
+
 func (r Row[T]) Sample(d [2]uint) Row[T]{
 	return Row[T](Step[T](After(iter.Seq[T](r),d[0]),d[1]))
 }	
@@ -44,24 +60,29 @@ func (r Row[T]) Sub(d [2]uint) Row[T]{
 	return Row[T](Limit[T](After(iter.Seq[T](r),d[0]),d[1]))
 }
 
+func (r Row[T]) Select(cs ...uint) Row[T]{
+	return Row[T](Sub(iter.Seq[T](r),cs...))
+}
+
+
 
 //func (r Row[T]) Sprint() Row[string]{
 //	return r.Sprintf(nil)
 //}
 
 // produces a Row[string] from Row[any]
-// uses a sequence of Formatter's
-// defaults to fmt.Formatter when;
+// obtains the sting using a Row of Formatter's
+// if not available, string comes from a fmt.Formatter using the provided format strings (f0 for first,f for the rest), this is when;
+// *	fmts==nil
+// *	fmts has stopped
 // *	Formatter==nil
-// *	Row[Formatter]==nil
-// *	Row[Formatter] has stopped
-func (r Row[T]) Sprintf(f1,f string,fmts Row[Formatter]) Row[string]{
+func (r Row[T]) Sprintf(f0,f string,fmts Row[Formatter]) Row[string]{
 	if fmts==nil{
 		return func(yield func(string) bool) {
 			next, stop := iter.Pull(iter.Seq[T](r))
 			defer stop()
 			v, ok := next()
-			if !ok || !yield(fmt.Sprintf(f1,v)) {
+			if !ok || !yield(fmt.Sprintf(f0,v)) {
 				return
 			}
 			for {
@@ -87,7 +108,7 @@ func (r Row[T]) Sprintf(f1,f string,fmts Row[Formatter]) Row[string]{
 				return
 			}
 		}else{
-			if !yield(fmt.Sprintf(f1,v)) {
+			if !yield(fmt.Sprintf(f0,v)) {
 				return
 			}
 		}

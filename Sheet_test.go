@@ -27,11 +27,76 @@ func ExampleCompareSheets(){
 }
 
 
-func ExampleSheetColumn(){
-	fmt.Printf("%\t\n",SheetColumn(2,NewSheet(NewRow(1,2,3),NewRow(4,5,6))))
+func ExampleSheet_Column(){
+	fmt.Printf("%\t\n",NewSheet(NewRow(1,2,3),NewRow(4,5,6)).Column(2))
 	// Output:
 	// 2	5
 }
+
+func ExampleSheet_SelectColumns(){
+	fmt.Printf("%\n\n",NewSheet(NewRow(1,2,3),NewRow(4,5,6)).SelectColumns(2,3))
+	// Output:
+	// 23
+	// 56
+}
+
+
+func ExampleSelectRows(){
+	s:=NewSheet(
+		NewRow(1,2,3),
+		NewRow(4,5,6),
+		NewRow(3,2,1),
+	)
+	fmt.Printf("%\n\n",SelectRows(s,1,2))
+	fmt.Printf("%\n\n",SelectRows(s,0,1))
+	// Output:
+	// 123
+	// 321
+	// 123
+}
+
+func ExampleSelectRowsFrom(){
+	s:=NewSheet(
+		NewRow(1,2,3),
+		NewRow(4,5,6),
+		NewRow(3,2,1),
+	)
+	fmt.Printf("%\n\n",SelectRowsFrom(s,s.SelectColumns(2),0,2))
+	fmt.Printf("%\n\n",SelectRowsFrom(s,s,0,1))
+	// Output:
+	// 123
+	// 321
+	// 123
+}
+
+func ExampleSelectMatchedRows(){
+	s:=NewSheet(
+		NewRow(1,2,3),
+		NewRow(3,2,1),
+		NewRow(4,5,6),
+		NewRow(3,2,1),
+	)
+	
+	fmt.Printf("%\n\n",SelectMatchedRows(s,NewRow(3,2,1)))
+	// Output:
+	// 321
+	// 321
+}
+
+func ExampleSelectMatchedRowsFrom(){
+	s:=NewSheet(
+		NewRow(1,2,3),
+		NewRow(3,2,1),
+		NewRow(4,5,6),
+		NewRow(3,2,5),
+	)
+	
+	fmt.Printf("%\n\n",SelectMatchedRowsFrom(s,s.SelectColumns(2,1),NewRow(2,3)))
+	// Output:
+	// 321
+	// 325
+}
+
 
 func ExampleHeadedSheet(){
 	ht:=HeadedSheet[int]{

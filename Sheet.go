@@ -12,6 +12,28 @@ func NewSheet[T Row[U],U any](rs ...T) Sheet[T,U]{
 	return Sheet[T,U]{Row[T](slices.Values(rs))}
 }
 
+func (s Sheet[T,U]) Column(i uint) T{
+	return func(yield func(U) bool) {
+		for r:=range s.Row{
+			if !yield(Row[U](r).At(i-1)){
+				return
+			}
+		}
+	}
+}
+
+func (s Sheet[T,U]) SelectColumns(cs ...uint) Sheet[T,U]{	
+	return Sheet[T,U]{
+		func(yield func(T) bool) {
+			for r:=range s.Row{
+				if !yield(T(Row[U](r).Select(cs...))){
+					return
+				}
+			}
+		},
+	}
+}
+
 func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
 	next1, stop1 := iter.Pull(iter.Seq[T](s1.Row))
 	next2, stop2 := iter.Pull(iter.Seq[T](s2.Row))
@@ -31,15 +53,31 @@ func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
 }
 
 
-func SheetColumn[T Row[U],U any](i uint,s Sheet[T,U]) T{
-	return func(yield func(U) bool) {
-		for r:=range iter.Seq[T](s.Row){
-			if !yield(Row[U](r).At(i-1)){
-				return
+func SelectMatchedRows[T Row[U],U comparable](s Sheet[T,U], match Row[U] ) Sheet[T,U]{	
+	return SelectRowsFunc(s,
+		func(r Row[U])bool{
+			return CompareRows(r,match)
+		},
+	)
+}
+
+
+func SelectRows[T Row[U],U comparable](s Sheet[T,U], col uint, v U ) Sheet[T,U]{
+	return SelectRowsFunc(s,func(r Row[U])bool{return r.At(col)==v})
+}
+
+func SelectRowsFunc[T Row[U],U comparable](s Sheet[T,U], match func(Row[U])bool) Sheet[T,U]{
+	return Sheet[T,U]{
+		func(yield func(T) bool) {
+			for r:=range s.Row{
+				if match(Row[U](r)) && !yield(r){
+					return
+				}
 			}
-		}
+		},
 	}
 }
+
 
 type HeadedSheet[U any] struct{
 	Row[string]
@@ -70,4 +108,33 @@ type FormattedSheet[U any] struct{
 //        }
 //    }
 //}
+
+
+
+func SelectRowsFrom[T Row[U],U comparable](f,s Sheet[T,U], col uint, v U ) Sheet[T,U]{
+	return SelectRowsFromFunc(f,s,func(r Row[U])bool{return r.At(col)==v})
+}
+
+func SelectMatchedRowsFrom[T Row[U],U comparable](f,s Sheet[T,U], match Row[U] ) Sheet[T,U]{	
+	return SelectRowsFromFunc(f,s,
+		func(r Row[U])bool{
+			return CompareRows(r,match)
+		},
+	)
+}
+
+func SelectRowsFromFunc[T Row[U],U comparable,F Row[G],G any](f Sheet[F,G],s Sheet[T,U], match func(Row[U])bool) Sheet[F,G]{
+	var i uint
+	return Sheet[F,G]{
+		func(yield func(F) bool) {
+			for r:=range s.Row{
+				if match(Row[U](r)) && !yield(f.At(i)){
+					return
+				}
+				i++
+			}
+		},
+	}
+}
+
 

@@ -1,6 +1,7 @@
 package sheets
 
 import "iter"
+//import "log"
 
 // only for the same type (can be any)
 func Concat[T any](rs ...iter.Seq[T]) iter.Seq[T] {
@@ -33,6 +34,23 @@ func Compare[T comparable](r1,r2 iter.Seq[T]) bool{
 	return true
 }
 
+func CompareNotNil(r1,r2 iter.Seq[any]) bool{
+	next1, stop1 := iter.Pull(r1)
+	next2, stop2 := iter.Pull(r2)
+	defer stop1()
+	defer stop2()
+	for{
+		v1, ok1 := next1()
+		v2, ok2 := next2()
+		if !ok1 && !ok2 {
+			return true
+		}
+		if !ok1 || !ok2 || v1==nil || v2==nil || v1!=v2{
+			return false
+		}
+	}
+	return true
+}
 
 // starts after a number of elements from the provided sequence
 func After[T any](ts iter.Seq[T],start uint) iter.Seq[T] {
@@ -124,4 +142,35 @@ func Reverse[Slice ~[]T, T any](s Slice) iter.Seq[T]{
 	}
 }
 
+// returns the required sequence items, optimised for random order and/or repeating 
+func Sub[T any](ts iter.Seq[T],is ...uint) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		var c uint
+		found:=make(map[uint]T)
+		next, stop := iter.Pull(ts)
+		defer stop()
+		for _,i:=range is{
+			if m,got:=found[i];got{
+				if !yield(m){
+					return
+				}
+				continue
+			}
+			c++
+			for ;;c++{
+				t,ok:=next()
+				if !ok{
+					break
+				}
+				found[c]=t
+				if m,got:=found[i];got{
+					if !yield(m){
+						return
+					}
+					break
+				}				
+			}
+		}
+	}
+}
 
