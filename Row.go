@@ -31,7 +31,7 @@ func NewReverseRow[T any](rs ...T) Row[T]{
 }
 
 func CompareRows[T comparable](r1,r2 Row[T]) bool{
-	return Compare(List[T](r1),List[T](r2))
+	return Same(List[T](r1),List[T](r2))
 }
 
 func (r Row[T]) Cache() Row[T]{

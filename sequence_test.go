@@ -46,6 +46,9 @@ func Sqrt[T Unsigned](x T) (r T) {
 	return
 }
 
+
+
+
 func ExampleLimit() {
 	fmt.Printf("%,", Row[int](Limit(Odds[int](),10)))
 	// Output:
@@ -177,6 +180,44 @@ func ExamplePermutations() {
 ////	// Output:
 ////	// 1	2	3	4	5	6	7	8	9
 ////}
+
+
+func ExampleMatched() {
+	fmt.Println(Matched(Runes("hello"),Runes("hello")))
+	fmt.Println(Matched(Runes("hello"),Runes("hellu")))
+	fmt.Println(Matched(Runes("hello"),Runes("hello"),Runes("hello"),Runes("hello")))
+	fmt.Println(Matched(Runes("hello"),Runes("hello"),Runes("hellu"),Runes("hello")))
+	fmt.Println(Matched(Runes("hello"),Runes("hello there"))) // ignores " there"
+	fmt.Println(Matched(Runes("hello there"),Runes("hello")))
+	// Output:
+	// true
+	// false
+	// true
+	// false
+	// true
+	// false
+}
+
+func ExampleSame() {
+//	fmt.Println(Compare(iter.Seq[rune](NewRow([]rune("hello")...)),iter.Seq[rune](NewRow([]rune("hello")...))))
+	fmt.Println(Same(Runes("hello"),Runes("hello")))
+	fmt.Println(Same(Runes("hello"),Runes("hellu")))
+	// Output:
+	// true
+	// false
+
+}
+
+//func ExampleCompare_c() {
+////	fmt.Println(Compare(iter.Seq[rune](NewRow([]rune("hello")...)),iter.Seq[rune](NewRow([]rune("hello")...))))
+//	fmt.Println(compare2(Runes("hello"),Runes("hello")))
+//	// Output:
+//	// true
+//	// false
+//	// true
+//	// false
+//}
+
 
 func TestSequence(t *testing.T) {
 

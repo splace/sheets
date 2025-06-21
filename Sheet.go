@@ -45,7 +45,7 @@ func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
 		if !ok1 && !ok2 {
 			return true
 		}
-		if !ok1 || !ok2 || !Compare(List[U](r1),List[U](r2)){
+		if !ok1 || !ok2 || !Same(List[U](r1),List[U](r2)){
 			return false
 		}
 	}

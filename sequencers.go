@@ -4,7 +4,6 @@ import "runtime"
 import "iter"
 //import "log"
 
-// only for the same type (can be any)
 func Concat[T any](rs ...iter.Seq[T]) iter.Seq[T] {
     return func(yield func(T) bool) {
         for _, r := range rs {
@@ -88,7 +87,7 @@ func Step[T any](ts iter.Seq[T],step uint) iter.Seq[T] {
 	}
 }
 
-// returns a sequence composed of all the i'th elements from each sequence in the provded sequence of sequences.
+// returns a sequence composed of all the i'th returns from each sequence in the provded sequence of sequences.
 func Ats[T any](ts iter.Seq[iter.Seq[T]],i uint) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for r:=range ts{
@@ -102,7 +101,7 @@ func Ats[T any](ts iter.Seq[iter.Seq[T]],i uint) iter.Seq[T] {
 	}
 }
 
-// returns a selection from a sequence of sequences, where the sequences i'th element matches a func.
+// returns a selection from a sequence of sequences, where the sequences i'th return matches a func.
 func Select[T any](ts iter.Seq[iter.Seq[T]],i uint,isMatch func(T)bool) iter.Seq[iter.Seq[T]] {
 	return func(yield func(iter.Seq[T]) bool) {
 		for r:=range ts{
@@ -327,6 +326,7 @@ func Amalgomate[T any, U any](apply func(...T) U, ss ...iter.Seq[T]) iter.Seq[U]
 		}
 	}
 }
+
 func Repeat[T any](v T) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for yield(v) {}
@@ -438,20 +438,22 @@ func Interleave[T any](s iter.Seq[T], p ...T) iter.Seq[T] {
 	}
 }
 
+// separets a seq2 into two seq
+// notce: reads the provided seq2 twice TODO buffer one? both?
 func Split[T any](ss iter.Seq2[string,T]) (iter.Seq[string],iter.Seq[T]){
 	return func(yield func(string)bool){
-			for s,_:=range ss{
-				if !yield(s){
-					return
-				}
-			}
-		},
-		func(yield func(T)bool){
-			for _,s :=range ss{
-				if !yield(s){
-					return
-				}
+		for s,_:=range ss{
+			if !yield(s){
+				return
 			}
 		}
+	},
+	func(yield func(T)bool){
+		for _,s :=range ss{
+			if !yield(s){
+				return
+			}
+		}
+	}
 }
 
