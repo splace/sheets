@@ -29,5 +29,16 @@ func GroupBy[T Row[U],U comparable](s Sheet[T,U], group func(Row[U])bool) Sheets
 	}
 }
 
+func GroupBy2[T Row[U],U comparable](s Sheet[T,U], matches Row[func(Row[U])bool]) Row[Sheet[T,U]]{
+	return Row[Sheet[T,U]](
+		func(yield func(Sheet[T,U]) bool) {
+			for match:=range matches{
+				if !yield(SelectRowsFunc[T,U](s,match)){
+					return
+				}
+			}
+		},
+	)
+}
 
 

@@ -19,5 +19,32 @@ func ExampleGroupBy(){
 	// 456
 }
 
+func ExampleGroupBy2(){
+	ss:=NewSheet(NewRow(1,2,3),NewRow(4,5,6))
+	fmt.Printf("%,\n",GroupBy2(ss,
+		NewRow(
+			func(r Row[int])bool{return r.At(0)==1},
+			func(r Row[int])bool{return r.At(0)==2},
+			func(r Row[int])bool{return r.At(0)==3},
+			func(r Row[int])bool{return r.At(0)==4},
+		),
+	))
+	// Output:
+	// 123,,,456
+}
+
+func ExampleGroupBy2_concat(){
+	ss:=NewSheet(NewRow(1,2,3),NewRow(4,5,6))
+	fmt.Printf("%,\n",GroupBy2(ss,
+		NewRow(
+			func(r Row[int])bool{return r.At(0)==1},
+			func(r Row[int])bool{return r.At(0)==2},
+			func(r Row[int])bool{return r.At(0)==3},
+			func(r Row[int])bool{return r.At(0)==4},
+		),
+	))
+	// Output:
+	// 123,,,456
+}
 
 

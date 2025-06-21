@@ -35,8 +35,8 @@ func (s Sheet[T,U]) SelectColumns(cs ...uint) Sheet[T,U]{
 }
 
 func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
-	next1, stop1 := iter.Pull(iter.Seq[T](s1.Row))
-	next2, stop2 := iter.Pull(iter.Seq[T](s2.Row))
+	next1, stop1 := iter.Pull(List[T](s1.Row))
+	next2, stop2 := iter.Pull(List[T](s2.Row))
 	defer stop1()
 	defer stop2()
 	for{
@@ -45,7 +45,7 @@ func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
 		if !ok1 && !ok2 {
 			return true
 		}
-		if !ok1 || !ok2 || !Compare(iter.Seq[U](r1),iter.Seq[U](r2)){
+		if !ok1 || !ok2 || !Compare(List[U](r1),List[U](r2)){
 			return false
 		}
 	}
@@ -82,6 +82,11 @@ func SelectRowsFunc[T Row[U],U comparable](s Sheet[T,U], match func(Row[U])bool)
 type HeadedSheet[U any] struct{
 	Row[string]
 	Sheet[Row[U],U]
+}
+
+func NewHeadedSheet[T any](ss iter.Seq2[string,T]) HeadedSheet[T]{
+	r,s:=Split(ss)
+	return HeadedSheet[T]{Row[string](r),NewSheet[Row[T],T](Row[T](s))}
 }
 
 func (ht HeadedSheet[T]) Format(s fmt.State, _ rune ){

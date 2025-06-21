@@ -37,7 +37,7 @@ func ReadLineScanner(sr iter.Seq[io.Reader]) iter.Seq[iter.Seq[string]]{
 
 // os.Root.FS
 func FolderScanner(s string) iter.Seq2[string,iter.Seq[string]]{
-	//	return DirScanner(os.DirFS(s)) switched to Root for better containment
+	//	return DirScanner(os.DirFS(s)) switched to Root for better isolation
 	r,_:=os.OpenRoot(s)
 	return DirScanner(r.FS())
 }
@@ -47,7 +47,7 @@ func FolderScanner(s string) iter.Seq2[string,iter.Seq[string]]{
 
 // fs.ReadDirFile needs to be from root of fs (using fs.Sub()? )
 
-// uses root of the provided fs
+// uses root of the provided fs (so path in fs, no need to pass in)
 // NB. no particular order
 // NB. opens as it goes
 func DirScanner(fsys fs.FS) iter.Seq2[string,iter.Seq[string]]{
