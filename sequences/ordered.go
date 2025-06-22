@@ -1,4 +1,4 @@
-package sheets
+package sequences
 
 import . "golang.org/x/exp/constraints"
 

@@ -11,11 +11,13 @@ package sheets
 // Db driver SQL folder
 // ASCII tables from db
 
-// ordering not suitable for sequencing, you need collect all then sort the slice
+// ordering not really conpatable with sequencing, you need to collect all then sort the slice
 // order references as 
 
 
 // done
 // Sequences package
+// struct HeadedSheet
+
 
 

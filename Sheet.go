@@ -3,6 +3,9 @@ package sheets
 import "fmt"
 import "iter"
 import "slices"
+import "./sequences"
+
+
 
 type Sheet[T Row[U],U any] struct{
 	Row[T]
@@ -35,8 +38,8 @@ func (s Sheet[T,U]) SelectColumns(cs ...uint) Sheet[T,U]{
 }
 
 func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
-	next1, stop1 := iter.Pull(List[T](s1.Row))
-	next2, stop2 := iter.Pull(List[T](s2.Row))
+	next1, stop1 := iter.Pull(iter.Seq[T](s1.Row))
+	next2, stop2 := iter.Pull(iter.Seq[T](s2.Row))
 	defer stop1()
 	defer stop2()
 	for{
@@ -45,7 +48,7 @@ func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
 		if !ok1 && !ok2 {
 			return true
 		}
-		if !ok1 || !ok2 || !Same(List[U](r1),List[U](r2)){
+		if !ok1 || !ok2 || !sequences.Same(iter.Seq[U](r1),iter.Seq[U](r2)){
 			return false
 		}
 	}
@@ -85,7 +88,7 @@ type HeadedSheet[U any] struct{
 }
 
 func NewHeadedSheet[T any](ss iter.Seq2[string,T]) HeadedSheet[T]{
-	r,s:=Split(ss)
+	r,s:=sequences.Split(ss)
 	return HeadedSheet[T]{Row[string](r),NewSheet[Row[T],T](Row[T](s))}
 }
 
@@ -93,7 +96,7 @@ func (ht HeadedSheet[T]) Format(s fmt.State, _ rune ){
 //	//fmt.Fprintf(s,fmt.Sprintf("%%%c",verb)+"\n",ht.Row)
 //	//fmt.Fprintf(s,"%\n",ht.Sheet)
 //	fmt.Fprintf(s,"%\n",ConcatRows[string](NewRow(ht.Row).Sprintf("%10v","|%v",nil),ht.Sheet.Sprintf("%v","|%v",nil)))
-	fmt.Fprintf(s,"%\n",Row[string](Concat[string](iter.Seq[string](NewRow(ht.Row).Sprintf("%10v","|%v",nil)),iter.Seq[string](ht.Sheet.Sprintf("%v","|%v",nil)))))
+	fmt.Fprintf(s,"%\n",Row[string](sequences.Concat[string](iter.Seq[string](NewRow(ht.Row).Sprintf("%10v","|%v",nil)),iter.Seq[string](ht.Sheet.Sprintf("%v","|%v",nil)))))
 }
 
 type FormattedSheet[U any] struct{

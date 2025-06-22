@@ -27,6 +27,19 @@ func ExampleNewRow(){
 	// 0012345789
 }
 
+func ExampleRow_Cache(){
+	ns:=[]float32{0,1,2,3,4,5,6,7,8,9}
+	n:=NewRow(ns...)
+	cached:=n.Cache()
+	fmt.Println(n,cached)
+	ns[6]=0
+	fmt.Println(n,cached)
+	// Output:
+	// 0123456789 0123456789
+	// 0123450789 0123456789
+}
+
+
 func ExampleReverse(){
 	n:=NewRow(0,1,2,3,4,5,6,7,8,9)
 	fmt.Println(n.Sub([2]uint{4,4}))

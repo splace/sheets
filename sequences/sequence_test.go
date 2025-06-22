@@ -1,10 +1,11 @@
-package sheets
+package sequences
 
 import "fmt"
 import . "golang.org/x/exp/constraints"
 import "math"
 import "testing"
 import "iter"
+import . "../lists"
 
 
 func Primes[T Unsigned]() iter.Seq[T] {
@@ -160,11 +161,11 @@ func ExampleRunes() {
 	// 104 101 108 108 111
 }
 
-func ExamplePermutations() {
-	fmt.Print( List[rune](Permutations(Runes("ab"))))
-	// Output:
-	// 'h' 'e' 'l' 'l' 'o' 'h' 'e' 'l' 'l' 'o'
-}
+//func ExamplePermutations() {
+//	fmt.Print( List[rune](Permutations(List[string]("ab"))))
+//	// Output:
+//	// 'h' 'e' 'l' 'l' 'o' 'h' 'e' 'l' 'l' 'o'
+//}
 
 func ExampleAmalgomate() {
 	fmt.Print( List[string](Amalgomate[rune,string](

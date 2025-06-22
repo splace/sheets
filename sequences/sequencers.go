@@ -1,8 +1,7 @@
-package sheets
+package sequences
 
 import "runtime"
 import "iter"
-//import "log"
 
 func Concat[T any](rs ...iter.Seq[T]) iter.Seq[T] {
     return func(yield func(T) bool) {

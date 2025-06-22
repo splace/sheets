@@ -3,11 +3,11 @@ package sheets
 import "iter"
 import "fmt"
 import "slices"
-import "cmp"
+import "./lists"
+import "./sequences"
+import . "golang.org/x/exp/constraints"
 
-//import "log"
-
-type Row[T any] List[T]
+type Row[T any] lists.List[T]
 
 // source slice is referencef so can be changed inplace
 func NewRow[T any](rs ...T) Row[T]{
@@ -27,30 +27,30 @@ func NewRowSeq[T any](rs ...T) Row[T]{
 }
 
 func NewReverseRow[T any](rs ...T) Row[T]{
-	return Row[T](Reverse(rs))
+	return Row[T](sequences.Reverse(rs))
 }
 
 func CompareRows[T comparable](r1,r2 Row[T]) bool{
-	return Same(List[T](r1),List[T](r2))
+	return sequences.Same(iter.Seq[T](r1),iter.Seq[T](r2))
 }
 
 func (r Row[T]) Cache() Row[T]{
-	return Row[T](slices.Values(slices.Collect(List[T](r))))
+	return Row[T](slices.Values(slices.Collect(iter.Seq[T](r))))
 }
 
-func Sorted[T cmp.Ordered](r Row[T]) Row[T]{
-	return NewRow(slices.Sorted(List[T](r))...)
+func Sorted[T Ordered](r Row[T]) Row[T]{
+	return NewRow(slices.Sorted(iter.Seq[T](r))...)
 }
 
 
 func (r Row[T]) Reverse() Row[T]{
-	t:=slices.Collect(List[T](r))
+	t:=slices.Collect(iter.Seq[T](r))
 	slices.Reverse(t)
 	return Row[T](slices.Values(t))
 }
 
 func (r Row[T]) At(i uint) (d T){
-	for d=range After(List[T](r),i){
+	for d=range sequences.After(iter.Seq[T](r),i){
 		break
 	}
 	return 
@@ -73,15 +73,15 @@ func (r Row[T]) Items(is ...uint) Row[T]{
 
 
 func (r Row[T]) Sample(d [2]uint) Row[T]{
-	return Row[T](Step[T](After(List[T](r),d[0]),d[1]))
+	return Row[T](sequences.Step[T](sequences.After(iter.Seq[T](r),d[0]),d[1]))
 }	
 	
 func (r Row[T]) Sub(d [2]uint) Row[T]{
-	return Row[T](Limit[T](After(List[T](r),d[0]),d[1]))
+	return Row[T](sequences.Limit[T](sequences.After(iter.Seq[T](r),d[0]),d[1]))
 }
 
 func (r Row[T]) Select(cs ...uint) Row[T]{
-	return Row[T](Sub(List[T](r),cs...))
+	return Row[T](sequences.Sub(iter.Seq[T](r),cs...))
 }
 
 
@@ -99,7 +99,7 @@ func (r Row[T]) Select(cs ...uint) Row[T]{
 func (r Row[T]) Sprintf(f0,f string,fmts Row[Formatter]) Row[string]{
 	if fmts==nil{
 		return func(yield func(string) bool) {
-			next, stop := iter.Pull(List[T](r))
+			next, stop := iter.Pull(iter.Seq[T](r))
 			defer stop()
 			v, ok := next()
 			if !ok || !yield(fmt.Sprintf(f0,v)) {
@@ -114,8 +114,8 @@ func (r Row[T]) Sprintf(f0,f string,fmts Row[Formatter]) Row[string]{
 		}
 	}
 	return func(yield func(string) bool) {
-		next, stop := iter.Pull(List[T](r))
-		nextf, stopf := iter.Pull(List[Formatter](fmts))
+		next, stop := iter.Pull(iter.Seq[T](r))
+		nextf, stopf := iter.Pull(iter.Seq[Formatter](fmts))
 		defer stop()
 		defer stopf()
 		v, ok := next()
@@ -162,7 +162,7 @@ func (r Row[T]) Format(s fmt.State, verb rune ){
 	// if the verb is a sep then use it as one
 	//log.Printf("%T %q",r,verb)
 	if slices.Contains([]rune{'\t','\n',',','.','/','\\','|'},verb){
-		next, stop := iter.Pull(List[T](r))
+		next, stop := iter.Pull(iter.Seq[T](r))
 		defer stop()
 		v, ok := next()
 		if !ok {

@@ -1,4 +1,4 @@
-package sheets
+package sequences
 
 import "iter"
 
