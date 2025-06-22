@@ -1,6 +1,5 @@
 package sheets
 
-//import "iter"
 import . "golang.org/x/exp/constraints"
 
 
@@ -9,6 +8,5 @@ func Between[T Ordered](lower, upper T) func(T) bool {
 		return i > lower && i < upper
 	}
 }
-
 
 

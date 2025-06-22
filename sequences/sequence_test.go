@@ -50,63 +50,63 @@ func Sqrt[T Unsigned](x T) (r T) {
 
 
 func ExampleLimit() {
-	fmt.Printf("%,", Row[int](Limit(Odds[int](),10)))
+	fmt.Print( List[int](Limit(Odds[int](),10)))
 	// Output:
-	// 1,3,5,7,9,11,13,15,17,19
+	// 1 3 5 7 9 11 13 15 17 19
 }
 
 func ExampleRepeat() {
-	fmt.Printf("%,", Row[float32](Limit(Repeat[float32](9),10)))
+	fmt.Print( List[float32](Limit(Repeat[float32](9),10)))
 	// Output:
-	// 9,9,9,9,9,9,9,9,9,9
+	// 9 9 9 9 9 9 9 9 9 9
 }
 
 func ExampleRepeatSequence() {
-	fmt.Printf("%q", Row[rune](Limit(RepeatSequence(Runes("Ab")),10)))
+	fmt.Print(List[rune](Limit(RepeatSequence(Runes("Ab")),10)))
 	// Output:
-	// 'A' 'b' 'A' 'b' 'A' 'b' 'A' 'b' 'A' 'b'
+	// 65 98 65 98 65 98 65 98 65 98
 }
 
 func ExampleOdds() {
-	fmt.Printf("%,", Row[int](Limit(Odds[int](),10)))
+	fmt.Print( List[int](Limit(Odds[int](),10)))
 	// Output:
-	// 1,3,5,7,9,11,13,15,17,19
+	// 1 3 5 7 9 11 13 15 17 19
 }
 
 func ExampleFilter() {
-	fmt.Printf("%,", Row[int](Limit(Filter(Between(10, 100), Odds[int]()),10)))
+	fmt.Print( List[int](Limit(Filter(Between(10, 100), Odds[int]()),10)))
 	// Output:
-	// 11,13,15,17,19,21,23,25,27,29
+	// 11 13 15 17 19 21 23 25 27 29
 }
 
 func ExampleMake() {
-	fmt.Printf("%,", Row[[2]int](Limit(Make(func(i int) [2]int { return [2]int{i, 2 * i} }),10)))
+	fmt.Print( List[[2]int](Limit(Make(func(i int) [2]int { return [2]int{i, 2 * i} }),10)))
 	// Output:
-	// [0 0],[1 2],[2 4],[3 6],[4 8],[5 10],[6 12],[7 14],[8 16],[9 18]
+	// [0 0] [1 2] [2 4] [3 6] [4 8] [5 10] [6 12] [7 14] [8 16] [9 18]
 }
 
 func ExampleUntil() {
-	fmt.Printf("%,", Row[uint](Until(func(n uint) bool { return n > 10 }, Odds[uint]())))
+	fmt.Print( List[uint](Until(func(n uint) bool { return n > 10 }, Odds[uint]())))
 	// Output:
-	// 1,3,5,7,9,11
+	// 1 3 5 7 9 11
 }
 
 func ExampleMultiply() {
-	fmt.Printf("%,", Row[uint](Limit(Multiply(PrimesAbove[uint](0), 2),10)))
+	fmt.Print( List[uint](Limit(Multiply(PrimesAbove[uint](0), 2),10)))
 	// Output:
-	// 2,6,10,14,22,26,34,38,46,58
+	// 2 6 10 14 22 26 34 38 46 58
 }
 
 func ExampleApply() {
-	fmt.Printf("%,", Row[float32](Limit(Apply(PrimesAbove[uint](0), func(i uint) float32 { return float32(math.Sqrt(float64(i))) }),5)))
+	fmt.Print( List[float32](Limit(Apply(PrimesAbove[uint](0), func(i uint) float32 { return float32(math.Sqrt(float64(i))) }),5)))
 	// Output:
-	// 1,1.7320508,2.236068,2.6457512,3.3166249
+	// 1 1.7320508 2.236068 2.6457512 3.3166249
 }
 
 func ExampleApply_typeChanging() {
-	fmt.Printf("%,", Row[float32](Limit(Apply(PrimesAbove[uint](0), func(i uint) float32 { return float32(i) / 2 }),10)))
+	fmt.Print( List[float32](Limit(Apply(PrimesAbove[uint](0), func(i uint) float32 { return float32(i) / 2 }),10)))
 	// Output:
-	// 0.5,1.5,2.5,3.5,5.5,6.5,8.5,9.5,11.5,14.5
+	// 0.5 1.5 2.5 3.5 5.5 6.5 8.5 9.5 11.5 14.5
 }
 
 func UntilAtLeastDelta[T Integer | Float](diff T) func(...T) bool {
@@ -116,69 +116,64 @@ func UntilAtLeastDelta[T Integer | Float](diff T) func(...T) bool {
 }
 
 func ExampleUntilHistory() {
-	fmt.Printf("%,", Row[uint8](UntilHistory(UntilAtLeastDelta[uint8](10), Primes[uint8]())))
+	fmt.Print( List[uint8](UntilHistory(UntilAtLeastDelta[uint8](10), Primes[uint8]())))
 	// Output:
-	// 1,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127
+	// 1 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97 101 103 107 109 113 127
 }
 
 func ExampleGeometric_float() {
-	fmt.Printf("%\t", Row[float32](Limit(Geometric[float32](10.0, 1.0),10)))
+	fmt.Print( List[float32](Limit(Geometric[float32](10.0, 1.0),10)))
 	// Output:
-	// 10	11	12	13	14	15	16	17	18	19
+	// 10 11 12 13 14 15 16 17 18 19
 }
 
 func ExampleGeometric_complex() {
-	fmt.Print(Limit(Geometric(10.0+1i, 1.0+2i),10))
+	fmt.Print(List[complex128](Limit(Geometric(10.0+1i, 1.0+2i),10)))
 	// Output:
 	// (10+1i) (11+3i) (12+5i) (13+7i) (14+9i) (15+11i) (16+13i) (17+15i) (18+17i) (19+19i)
 }
 
 func ExampleFibonacci_complex() {
 	var count uint = 10
-	fmt.Printf("%\t", Row[complex64](Limit(Fibonacci[complex64](),count)))
+	fmt.Print( List[complex64](Limit(Fibonacci[complex64](),count)))
 	// Output:
-	// (1+0i)	(1+0i)	(2+0i)	(3+0i)	(5+0i)	(8+0i)	(13+0i)	(21+0i)	(34+0i)	(55+0i)
+	// (1+0i) (1+0i) (2+0i) (3+0i) (5+0i) (8+0i) (13+0i) (21+0i) (34+0i) (55+0i)
+
 }
 
 func ExampleConcat() {
-	fmt.Printf("%\t", Row[uint](Limit(Concat(Limit(Odds[uint](),4), Evens[uint]()),8)))
+	fmt.Print( List[uint](Limit(Concat(Limit(Odds[uint](),4), Evens[uint]()),8)))
 	// Output:
-	// 1	3	5	7	0	2	4	6
+	// 1 3 5 7 0 2 4 6
 }
 
 func ExampleTotalise() {
-	fmt.Printf("%\t", Row[uint8](Limit(Totalise(Odds[uint8]()),9)))
+	fmt.Print( List[uint8](Limit(Totalise(Odds[uint8]()),9)))
 	// Output:
-	// 1	4	9	16	25	36	49	64	81
-}
-
-func ExampleFields() {
-	fmt.Printf("%\t", NewHeadedSheet(Fields(struct{Name string;Age uint}{"simon",60})))
-	// Output:
-	// 1	4	9	16	25	36	49	64	81
+	// 1 4 9 16 25 36 49 64 81
 }
 
 
 func ExampleRunes() {
-	fmt.Printf("%q", Row[rune](Runes("hello")))
+	fmt.Print(List[rune](Runes("hello")))
 	// Output:
-	// 'h' 'e' 'l' 'l' 'o'
+	// 104 101 108 108 111
 }
 
 func ExamplePermutations() {
-	fmt.Printf("%q", Row[rune](Permutations(Runes("hello"))))
+	fmt.Print( List[rune](Permutations(Runes("ab"))))
 	// Output:
 	// 'h' 'e' 'l' 'l' 'o' 'h' 'e' 'l' 'l' 'o'
 }
 
 func ExampleAmalgomate() {
-	fmt.Printf("%q", Row[string](Amalgomate[rune,string](
+	fmt.Print( List[string](Amalgomate[rune,string](
 		func(rs ...rune)string{return string(rs)},
 		Runes("hello"),
 		Runes("hello"),
 	)))
 	// Output:
-	// "hh""ee""ll""ll""oo"
+	// hh ee ll ll oo
 }
 
 ////func ExampleSequenceCycle(){
