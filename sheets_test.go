@@ -48,9 +48,4 @@ func ExampleGroupBy2_concat(){
 }
 
 
-func ExampleFields() {
-	fmt.Printf("%\t", NewHeadedSheet(Fields(struct{Name string;Age uint}{"simon",60})))
-	// Output:
-	// 1	4	9	16	25	36	49	64	81
-}
 

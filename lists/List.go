@@ -6,6 +6,7 @@ import "fmt"
 import "bytes"
 import "io"
 
+// List uses whitespace item separation.
 type List[T any] iter.Seq[T]
 
 func (l List[T]) String()string{
@@ -28,7 +29,7 @@ func (l List[T]) String()string{
 }
 
 func (l *List[T]) Scan(state fmt.ScanState, verb rune) (err error){
-	// buffer the runes from state since, unfortunately, state gets modified after this call.
+	// buffer the runes from state since, unfortunately, state gets modified by caller, fmt package, after this call. maybe dont use for large lists with early return.
 	var b bytes.Buffer
 	if _,err=copyRunes(&b,state);err!=nil{
 		return

@@ -11,7 +11,7 @@ package sheets
 // Db driver SQL folder
 // ASCII tables from db
 
-// ordering not really conpatable with sequencing, you need to collect all then sort the slice
+// ordering not really conpatible with sequencing, since you need to collect all, then sort the slice
 // order references as 
 
 

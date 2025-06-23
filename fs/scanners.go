@@ -9,92 +9,7 @@ import (
 	"bufio"
 )
 
-
-
-//func RuneSepFunc2(sep rune,pro ...func([]byte)[]byte) func([]byte,bool) (int,[]byte,error) {
-//	if len(pro)==0{
-//		return func(data []byte, atEOF bool) (int,[]byte,error) {
-//			if atEOF && len(data) == 0 {
-//				return 0, nil, nil
-//			}
-//			td:=data
-//			for len(data)>0{
-//				r,s:=utf8.DecodeRune(data)
-//				if r==sep{
-//					at:=len(td)-len(data)
-//					return at+1,td[:at],nil
-//				}
-//				data=data[s:]
-//			}
-//			if atEOF {
-//				return len(td), td[:len(td)-len(data)], nil
-//			}
-//			return 0, nil, nil
-//		}
-//	}	
-//	p:=combine(pro...)
-//	return func(data []byte, atEOF bool) (int,[]byte,error) {
-//		if atEOF && len(data) == 0 {
-//			return 0, nil, nil
-//		}
-//		td:=data
-//		for len(data)>0{
-//			r,s:=utf8.DecodeRune(data)
-//			if r==sep{
-//				at:=len(td)-len(data)
-//				return at+1,p(td[:at]),nil
-//			}
-//			data=data[s:]
-//		}
-//		if atEOF {
-//			return len(td), p(td[:len(td)-len(data)]), nil
-//		}
-//		return 0, nil, nil
-//	}
-//}
-
-
-func RuneSepFunc(sep rune,pro ...func([]byte)[]byte) func([]byte,bool) (int,[]byte,error) {
-	c:=combine(pro...)
-	return func(bs []byte, atEOF bool) (int,[]byte,error) {
-		i,bs,e:=EOFSepFunc(RuneSep(sep))(bs,atEOF)
-		return i,c(bs),e
-	}
-}
-
-
-func RuneSep(sep rune) func([]byte) (int,[]byte) {
-	return func(data []byte) (int,[]byte){
-		td:=data
-		for len(data)>0{
-			r,s:=utf8.DecodeRune(data)
-			if r==sep{
-				at:=len(td)-len(data)
-				return at+1,td[:at]
-			}
-			data=data[s:]
-		}
-		return 0, nil
-	}
-}
-
-// returns a sep func that returns upto a sep and also from last sep to EOF, as tokens
-func EOFSepFunc(sf func(data []byte) (int,[]byte))func(data []byte, atEOF bool) (int,[]byte,error) {
-	return func(data []byte, atEOF bool) (int,[]byte,error) {
-		if !atEOF{
-			i,data:=sf(data)
-			return i,data,nil
-		}
-		return len(data),emptyAsNil(data),nil
-	}
-}
-
-func emptyAsNil(b []byte) []byte{
-	if len(b)==0{
-		return nil
-	}
-	return b
-}
+import "./sepfuncs"
 
 type EOFScanner struct{
 	bufio.Scanner
@@ -134,18 +49,9 @@ func (s StringScanner) Text() string{
 
 const commment ="//"
 
-var LinesUniversal = RuneSepFunc('\n',CutSuffix("\r"),BeforeString(commment)) 
+var LinesUniversal = sepfunc.Rune('\n',CutSuffix("\r"),BeforeString(commment)) 
 
-var Lines = RuneSepFunc('\n',BeforeString(commment)) 
-
-func combine(fs ...func([]byte)[]byte)func([]byte)[]byte{
-	return func(in []byte)[]byte{
-		for _,f:=range fs{
-			in=f(in)	
-		}
-		return in
-	}
-}
+var Lines = sepfunc.Rune('\n',BeforeString(commment)) 
 
 func Trim(d []byte) []byte{
 	return TrimLeft(TrimRight(d))

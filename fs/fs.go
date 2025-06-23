@@ -49,7 +49,7 @@ func FolderScanner(s string) iter.Seq2[string,iter.Seq[string]]{
 
 // uses root of the provided fs (so path in fs, no need to pass in)
 // NB. no particular order
-// NB. opens as it goes
+// NB. opens files and returns a sequence of the lines in them.
 func DirScanner(fsys fs.FS) iter.Seq2[string,iter.Seq[string]]{
 	de,_:=fsys.Open(".")
 	des:=de.(fs.ReadDirFile)
@@ -92,6 +92,40 @@ func DirScanner2(fsys fs.FS) iter.Seq[io.Reader]{
 	}
 }
 
+func RootRegularFiles(fsys fs.FS) iter.Seq[fs.File]{
+	des,_:=fs.ReadDir(fsys,".")
+	return func(yield func(fs.File) bool) {
+		for _,de:=range des{
+			if !de.Type().IsRegular(){
+				continue
+			}
+			f,err:=fsys.Open(de.Name())
+			if err!=nil{
+				break
+			}
+			if !yield(f) {
+				return
+			}
+		}
+	}
+}
+
+
+func FileLineScanner(fs iter.Seq[fs.File]) iter.Seq2[string,iter.Seq[string]]{
+	return func(yield func(string,iter.Seq[string]) bool) {
+		for f:=range fs{
+			s,err:=f.Stat()
+			if err!=nil{
+				continue
+			}
+			if !yield(s.Name(),LineScanner(f)) {
+				return
+			}
+		}
+	}
+}
+
+
 
 // reads all in one go, sorts it
 func GlobScanner(fsys fs.FS, pattern string) iter.Seq2[string,iter.Seq[string]]{
@@ -99,24 +133,24 @@ func GlobScanner(fsys fs.FS, pattern string) iter.Seq2[string,iter.Seq[string]]{
 	if err!=nil{
 		return nil
 	}
-	return FilesScanner(fsys,matches)
+	return FilesLineScanner(fsys,matches)
 }
 
 
 
-func FilesScanner(fsys fs.FS,fs []string) iter.Seq2[string,iter.Seq[string]]{
-	return func(yield func(string,iter.Seq[string]) bool) {
-		for _,e:=range fs{
-			f,err:=fsys.Open(e)
-			if err!=nil{
-				break
-			}
-			if !yield(e,LineScanner(f)) {
-				return
-			}
-		}
-	}
-}
+//func FilesScanner(fsys fs.FS,fs []string) iter.Seq2[string,iter.Seq[string]]{
+//	return func(yield func(string,iter.Seq[string]) bool) {
+//		for _,e:=range fs{
+//			f,err:=fsys.Open(e)
+//			if err!=nil{
+//				break
+//			}
+//			if !yield(e,LineScanner(f)) {
+//				return
+//			}
+//		}
+//	}
+//}
 
 
 func FilesLineScanner(fsys fs.FS,fs []string) iter.Seq2[string,iter.Seq[string]]{
@@ -133,6 +167,22 @@ func FilesLineScanner(fsys fs.FS,fs []string) iter.Seq2[string,iter.Seq[string]]
 	}
 }
 
+func DirEntryLineScanner(fsys fs.FS,ds []fs.DirEntry) iter.Seq2[string,iter.Seq[string]]{
+	return func(yield func(string,iter.Seq[string]) bool) {
+		for _,e:=range ds{
+			if !e.Type().IsRegular(){
+				continue
+			}
+			f,err:=fsys.Open(e.Name())
+			if err!=nil{
+				continue
+			}
+			if !yield(e.Name(),LineScanner(f)) {
+				return
+			}
+		}
+	}
+}
 
 
 //type Scanned struct{

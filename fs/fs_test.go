@@ -39,3 +39,16 @@ func ExampleGlobScanner(){
 	// 
 }
 
+func ExampleRootRegularFiles(){
+	fsys:=os.DirFS("./testing/people.fsv")
+	for n,ls:=range FileLineScanner(RootRegularFiles(fsys)){
+		fmt.Printf("%q\n",n)
+		for l:=range ls{
+			fmt.Printf("\t%s\n",l)
+		}
+	}
+	// Output:
+	// 
+}
+
+

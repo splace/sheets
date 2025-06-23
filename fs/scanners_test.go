@@ -7,9 +7,11 @@ import (
 	"strings"
 )
 
-func ExampleRuneSepFunc(){
+import "./sepfuncs"
+
+func ExampleRune(){
 	scanner := bufio.NewScanner(strings.NewReader(" 123 , 124\t\t,\t234, ")) // bufio.Scanner
-	scanner.Split(RuneSepFunc(','))
+	scanner.Split(sepfunc.Rune(','))
 	for scanner.Scan() {
 		fmt.Printf("%q\n",Trim(scanner.Bytes()))
 	}
@@ -38,7 +40,7 @@ func ExampleBeforeString(){
 //	lscanner.Split(SepFunc('\n')) 
 	for lscanner.Scan() {
 		cscanner := bufio.NewScanner(bytes.NewReader(lscanner.Bytes()))
-		cscanner.Split(RuneSepFunc(',',BeforeString("##"),Trim))
+		cscanner.Split(sepfunc.Rune(',',BeforeString("##"),Trim))
 		fmt.Print("|")
 		for cscanner.Scan() {
 			fmt.Printf("%q\t\t|",cscanner.Text())
@@ -59,7 +61,7 @@ func ExampleBeforeString_windows(){
 	for lscanner.Scan() {
 //		fmt.Print(len(lscanner.Text()))
 		cscanner := bufio.NewScanner(bytes.NewReader(lscanner.Bytes()))
-		cscanner.Split(RuneSepFunc(',',Trim))
+		cscanner.Split(sepfunc.Rune(',',Trim))
 		fmt.Print("|")
 		for cscanner.Scan() {
 //			fmt.Printf("%q\t\t|",cscanner.Text())
