@@ -36,8 +36,8 @@ func ExampleSheet_Column(){
 func ExampleSheet_SelectColumns(){
 	fmt.Printf("%\n\n",NewSheet(NewRow(1,2,3),NewRow(4,5,6)).SelectColumns(2,3))
 	// Output:
-	// 23
-	// 56
+	// 2 3
+	// 5 6
 }
 
 
@@ -50,9 +50,9 @@ func ExampleSelectRows(){
 	fmt.Printf("%\n\n",SelectRows(s,1,2))
 	fmt.Printf("%\n\n",SelectRows(s,0,1))
 	// Output:
-	// 123
-	// 321
-	// 123
+	// 1 2 3
+	// 3 2 1
+	// 1 2 3
 }
 
 func ExampleSelectRowsFrom(){
@@ -64,9 +64,9 @@ func ExampleSelectRowsFrom(){
 	fmt.Printf("%\n\n",SelectRowsFrom(s,s.SelectColumns(2),0,2))
 	fmt.Printf("%\n\n",SelectRowsFrom(s,s,0,1))
 	// Output:
-	// 123
-	// 321
-	// 123
+	// 1 2 3
+	// 3 2 1
+	// 1 2 3
 }
 
 func ExampleSelectMatchedRows(){
@@ -79,8 +79,8 @@ func ExampleSelectMatchedRows(){
 	
 	fmt.Printf("%\n\n",SelectMatchedRows(s,NewRow(3,2,1)))
 	// Output:
-	// 321
-	// 321
+	// 3 2 1
+	// 3 2 1
 }
 
 func ExampleSelectMatchedRowsFrom(){
@@ -93,8 +93,8 @@ func ExampleSelectMatchedRowsFrom(){
 	
 	fmt.Printf("%\n\n",SelectMatchedRowsFrom(s,s.SelectColumns(2,1),NewRow(2,3)))
 	// Output:
-	// 321
-	// 325
+	// 3 2 1
+	// 3 2 5
 }
 
 

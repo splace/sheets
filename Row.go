@@ -7,36 +7,32 @@ import "./lists"
 import "./sequences"
 import . "golang.org/x/exp/constraints"
 
+
 type Row[T any] lists.List[T]
 
+func (r *Row[T]) Scan(s fmt.ScanState, v rune) error{
+	return (*lists.List[T])(r).Scan(s,v)
+}
+
 func NewRow[T any](rs ...T) Row[T]{
-	return Row[T](
-		func(yield func(T) bool) {
-			for _,r:=range rs{
-				if !yield(r){
-					return
-				}
-			}
-		},
-	)
+	return Row[T](slices.Values(rs))
 }
 
 func NewReverseRow[T any](rs ...T) Row[T]{
 	return Row[T](sequences.Reverse(rs))
 }
 
-func CompareRows[T comparable](r1,r2 Row[T]) bool{
-	return sequences.Same(iter.Seq[T](r1),iter.Seq[T](r2))
-}
-
 func (r Row[T]) Cache() Row[T]{
 	return NewRow[T](slices.Collect(iter.Seq[T](r))...)
+}
+
+func CompareRows[T comparable](r1,r2 Row[T]) bool{
+	return sequences.Same(iter.Seq[T](r1),iter.Seq[T](r2))
 }
 
 func Sorted[T Ordered](r Row[T]) Row[T]{
 	return NewRow(slices.Sorted(iter.Seq[T](r))...)
 }
-
 
 func (r Row[T]) Reverse() Row[T]{
 	t:=slices.Collect(iter.Seq[T](r))
@@ -173,10 +169,12 @@ func (r Row[T]) Format(s fmt.State, verb rune ){
 		}
 		return
 	}
-	// ...if not, pass on the verb as format for each item
-	for v:=range r{
-		fmt.Fprintf(s,fmt.Sprintf("%%%c",verb),v)
-	}
+	fmt.Fprint(s,lists.List[T](r))
+	
+//	// ...if not, pass on the verb as format for each item
+//	for v:=range r{
+//		fmt.Fprintf(s,fmt.Sprintf("%%%c",verb),v)
+//	}
 }
 
 type Formatter func(any)string

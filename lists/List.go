@@ -6,6 +6,8 @@ import "fmt"
 import "bytes"
 import "io"
 
+var Sep = " "
+ 
 // List uses whitespace item separation.
 type List[T any] iter.Seq[T]
 
@@ -23,7 +25,8 @@ func (l List[T]) String()string{
 		if !ok{
 			break
 		}
-		fmt.Fprint(&sb," ",v)
+		sb.WriteString(Sep)
+		fmt.Fprint(&sb,v)
 	}
 	return sb.String()	
 }

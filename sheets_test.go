@@ -7,16 +7,16 @@ func ExampleSheets(){
 	ss["test"]=NewSheet(NewRow(1,2,3),NewRow(4,5,6))
 	fmt.Printf("%\n",ss["test"])
 	// Output:
-	// 123
-	// 456
+	// 1 2 3
+	// 4 5 6
 }
 
 func ExampleGroupBy(){
 	ss:=NewSheet(NewRow(1,2,3),NewRow(4,5,6))
 	fmt.Printf("%v",GroupBy(ss,func(_ Row[int])bool{return true} ))
 	// Output:
-	// 123
-	// 456
+	// 1 2 3
+	// 4 5 6
 }
 
 func ExampleGroupBy2(){
@@ -30,7 +30,7 @@ func ExampleGroupBy2(){
 		),
 	))
 	// Output:
-	// 123,,,456
+	// 1 2 3,,,4 5 6
 }
 
 func ExampleGroupBy2_concat(){
@@ -44,7 +44,7 @@ func ExampleGroupBy2_concat(){
 		),
 	))
 	// Output:
-	// 123,,,456
+	// 1 2 3,,,4 5 6
 }
 
 

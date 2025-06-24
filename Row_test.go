@@ -9,10 +9,27 @@ func ExampleRow_At(){
 	// 6
 }
 
+func ExampleRow(){
+	fmt.Println(NewRow(0,1,2,3,4,5,6,7,8,9))
+	// Output:
+	// 0 1 2 3 4 5 6 7 8 9
+}
+
+func ExampleRow_Scan(){
+	var r = new(Row[uint8])
+	fmt.Println(fmt.Sscanf("0 1 2 3 4 5 6 7 8 9\n","%v",r))
+	fmt.Printf("%v\n",r)
+	// Output:
+	// 1 <nil>
+	// 0 1 2 3 4 5 6 7 8 9
+}
+
+
+
 func ExampleRow_Sample(){
 	fmt.Println(NewRow(0,1,2,3,4,5,6,7,8,9).Sample([2]uint{4,2}))
 	// Output:
-	// 468
+	// 4 6 8
 }
 
 func ExampleNewRow(){
@@ -23,8 +40,8 @@ func ExampleNewRow(){
 	slices.Sort(ns)
 	fmt.Println(n)
 	// Output:
-	// 0123456789
-	// 0012345789
+	// 0 1 2 3 4 5 6 7 8 9
+	// 0 0 1 2 3 4 5 7 8 9
 }
 
 func ExampleRow_Cache(){
@@ -35,8 +52,8 @@ func ExampleRow_Cache(){
 	ns[6]=0
 	fmt.Println(n,cached)
 	// Output:
-	// 0123456789 0123456789
-	// 0123450789 0123456789
+	// 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9
+	// 0 1 2 3 4 5 0 7 8 9 0 1 2 3 4 5 6 7 8 9
 }
 
 
@@ -45,27 +62,27 @@ func ExampleReverse(){
 	fmt.Println(n.Sub([2]uint{4,4}))
 	fmt.Println(n.Sub([2]uint{4,4}).Reverse())
 	// Output:
-	// 4567
-	// 7654
+	// 4 5 6 7
+	// 7 6 5 4
 }
 
 func ExampleSorted(){
 	n:=NewRow(0,1,2,3,5,4,6,7,8,9)
 	fmt.Println(Sorted(n))
 	// Output:
-	// 0123456789
+	// 0 1 2 3 4 5 6 7 8 9
 }
 
 func ExampleRow_Items(){
 	fmt.Println(NewRow(0,1,2,3,4,5,6,7,8,9).Items(2,7))
 	// Output:
-	// 16
+	// 1 6
 }
 
 func ExampleRow_Select(){
 	fmt.Println(NewRow(0,1,2,3,4,5,6,7,8,9).Select(2,7,2,7))
 	// Output:
-	// 1616
+	// 1 6 1 6
 }
 
 
