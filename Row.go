@@ -9,12 +9,7 @@ import . "golang.org/x/exp/constraints"
 
 type Row[T any] lists.List[T]
 
-// source slice is referencef so can be changed inplace
 func NewRow[T any](rs ...T) Row[T]{
-	return Row[T](slices.Values(rs))
-}
-
-func NewRowSeq[T any](rs ...T) Row[T]{
 	return Row[T](
 		func(yield func(T) bool) {
 			for _,r:=range rs{
@@ -35,7 +30,7 @@ func CompareRows[T comparable](r1,r2 Row[T]) bool{
 }
 
 func (r Row[T]) Cache() Row[T]{
-	return Row[T](slices.Values(slices.Collect(iter.Seq[T](r))))
+	return NewRow[T](slices.Collect(iter.Seq[T](r))...)
 }
 
 func Sorted[T Ordered](r Row[T]) Row[T]{
@@ -46,7 +41,7 @@ func Sorted[T Ordered](r Row[T]) Row[T]{
 func (r Row[T]) Reverse() Row[T]{
 	t:=slices.Collect(iter.Seq[T](r))
 	slices.Reverse(t)
-	return Row[T](slices.Values(t))
+	return NewRow[T](t...)
 }
 
 func (r Row[T]) At(i uint) (d T){
