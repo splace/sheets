@@ -41,11 +41,43 @@ func not(f func(rune)bool)func(rune)bool{return func(r rune)bool{return !f(r)}}
 
 func match(v rune)func(rune)bool{return func(r rune)bool{return r==v}}
 
+func or(fs ...func(rune)bool)func(r rune)bool {
+	return func(r rune)bool{
+		for _,f :=range fs{	
+			if f(r) {
+				return true
+			}
+		}
+		return false
+	}
+}
+
+func and(fs ...func(rune)bool)func(r rune)bool {
+	return func(r rune)bool{
+		for _,f :=range fs{	
+			if !f(r) {
+				return false
+			}
+		}
+		return true
+	}
+}
+
+
 func (ls *Strings) Scan(state fmt.ScanState, verb rune) (err error){
 	var lss []string
 	var t []byte
 	switch verb{
-	case '\t','\n',',','.','/','\\','|':
+	case '\t','\n':
+		for {
+			t,err=state.Token(false,not(match(verb))) // dont skip whitespace verb here is one, is skipped miss empty items
+			if err!=nil || len(t)==0{
+				break
+			}
+			lss=append(lss,string(t))
+			state.ReadRune()
+		}
+	case ',','.','/','\\','|':
 		for {
 			t,err=state.Token(true,not(match(verb)))
 			if err!=nil || len(t)==0{
@@ -69,6 +101,7 @@ func (ls *Strings) Scan(state fmt.ScanState, verb rune) (err error){
 	return
 }
 
+// store all tokens then parses to type as pulled
 func (l *List[T]) Scan(state fmt.ScanState, verb rune) (err error){
 	var ss Strings
 	err=ss.Scan(state,verb)

@@ -21,7 +21,7 @@ func IsPrime[T Unsigned](n T) bool {
 }
 
 func IsNotPrime[T Unsigned](n T) bool {
-	for i := T(2); i <= Sqrt(n); i += 1 { // cann't be divisible above the sqrt, if wasn't below.
+	for i := T(2); i <= Sqrt(n); i += 1 { // can't be divisible above the sqrt, if wasn't below.
 		if n%i == 0 {
 			return true
 		}

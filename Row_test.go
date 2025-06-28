@@ -79,6 +79,13 @@ func ExampleRow_Items(){
 	// 1 6
 }
 
+func ExampleRow_Items_missing(){
+	fmt.Println(NewRow(0,1,2,3,4,5,6,7,8,9).Items(2,27)==nil)
+	// Output:
+	// true
+}
+
+
 func ExampleRow_Select(){
 	fmt.Println(NewRow(0,1,2,3,4,5,6,7,8,9).Select(2,7,2,7))
 	// Output:

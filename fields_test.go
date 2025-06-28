@@ -2,14 +2,27 @@ package sheets
 
 import "fmt"
 
+type Person struct{
+	Name string `type:"Given"`
+	Age uint `unit:"Years"`
+}
+
+
 func ExampleFields() {
-	fmt.Print(NewHeadedSheet(Fields(struct{Name string;Age uint}{"simon",60})))
+	fmt.Print(NewHeadedSheet(Fields(Person{"simon",60})))
 	// Output:
 	// 
 }
 
 func ExampleFieldsTags() {
-	fmt.Print(NewHeadedSheet(FieldsTags(FieldsStructTags(FieldsValues(struct{Name string `type:"Given"`;Age uint `unit:"Years"`}{"simon",60})),"unit")))
+	fmt.Print(NewHeadedSheet(
+		FieldsTags(
+			FieldsStructTags(
+				FieldsValues(Person{"simon",60}),
+			),
+		"unit",
+		),
+	))
 	// Output:
 	// 
 }
