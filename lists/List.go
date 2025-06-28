@@ -10,7 +10,7 @@ import "fmt"
 //import "unicode"
 //import "log"
 
-var Sep = " "
+var Sep,LSep = " ","\n"
  
 // List uses whitespace item separation.
 type List[T any] iter.Seq[T]
@@ -23,17 +23,32 @@ func (l List[T]) String()string{
 	if !ok{
 		return ""
 	}
-	fmt.Fprint(&sb,v)
-	for {
-		v,ok=next()
-		if !ok{
-			break
+	switch any(v).(type){
+	case List[int]:
+		fmt.Fprintln(&sb,v)
+		for {
+			v,ok=next()
+			if !ok{
+				break
+			}
+			fmt.Fprintln(&sb,v)
 		}
-		sb.WriteString(Sep)
+	default:
 		fmt.Fprint(&sb,v)
+		for {
+			v,ok=next()
+			if !ok{
+				break
+			}
+			sb.WriteString(Sep)
+			fmt.Fprint(&sb,v)
+		}
+		
 	}
 	return sb.String()	
 }
+
+
 
 type Strings []string
 
