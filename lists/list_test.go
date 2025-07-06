@@ -19,6 +19,8 @@ func ExampleList(){
 	fmt.Println(lc)
 	// Output:
 	// 1 2 3
+	// 1 3 5
+	// 0 2 4
 }
 
 func ExampleStrings() {
@@ -74,7 +76,7 @@ func ExampleScan() {
 	}
 	fmt.Println(lc)
 	// Output:
-	// 2 3 Hi
+	// '2' '3' 'Hi'
 	// 2 3
 	// (2+0i) (3-6i)
 	// (2+0i) (3-6i)

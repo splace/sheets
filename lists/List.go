@@ -9,8 +9,10 @@ import "fmt"
 //import "bytes"
 //import "unicode"
 //import "log"
+//import . "golang.org/x/exp/constraints"
 
-var Sep,LSep = " ","\n"
+var Sep = " "
+
  
 // List uses whitespace item separation.
 type List[T any] iter.Seq[T]
@@ -24,7 +26,7 @@ func (l List[T]) String()string{
 		return ""
 	}
 	switch any(v).(type){
-	case List[int]:
+	case List[any],List[int],List[int8],List[int16],List[int32],List[int64],List[uint],List[uint8],List[uint16],List[uint32],List[uint64],List[float32],List[float64],List[complex64],List[complex128]:
 		fmt.Fprintln(&sb,v)
 		for {
 			v,ok=next()
@@ -32,6 +34,16 @@ func (l List[T]) String()string{
 				break
 			}
 			fmt.Fprintln(&sb,v)
+		}
+	case string:
+		fmt.Fprintf(&sb,"'%v'",v)
+		for {
+			v,ok=next()
+			if !ok{
+				break
+			}
+			sb.WriteString(Sep)
+			fmt.Fprintf(&sb,"'%v'",v)
 		}
 	default:
 		fmt.Fprint(&sb,v)

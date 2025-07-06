@@ -2,6 +2,7 @@ package sequences
 
 import "runtime"
 import "iter"
+import . "golang.org/x/exp/constraints"
 
 func Concat[T any](rs ...iter.Seq[T]) iter.Seq[T] {
     return func(yield func(T) bool) {
@@ -156,6 +157,38 @@ func Sub[T any](ts iter.Seq[T],is ...uint) iter.Seq[T] {
 	}
 }
 
+// returns the sequence items, at the indexes given by the values retuned from another sequence. optimised for random order and/or repeating 
+func SubIter[T any, U Unsigned](s iter.Seq[T], is iter.Seq[U]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		c := U(1)
+		found:=make(map[U]T)
+		next, stop := iter.Pull(s)
+		defer stop()
+		for i:=range is{
+			if m,have:=found[i];have{
+				if !yield(m){
+					return
+				}
+				continue
+			}
+			for ;;c++{
+				t,ok:=next()
+				if !ok{
+					break
+				}
+				found[c]=t
+				if m,got:=found[i];got{
+					if !yield(m){
+						return
+					}
+					c++
+					break
+				}				
+			}
+		}
+	}
+}
+
 
 //func Interlace[T any](ss ...iter.Seq[T]) iter.Seq[T] {
 //	return func(yield func(T) bool) {
@@ -180,6 +213,21 @@ func Sub[T any](ts iter.Seq[T],is ...uint) iter.Seq[T] {
 //		}
 //	}
 //}
+
+//// returns nil if Row ends before a requested item is arrived at. 
+//func Items[T Unsigned](is iter.Seq[T]) iter.Seq[T]{
+//	for i:=range is{
+//		if i==ci{
+//				iis[ii]=t
+//				needed--
+//				if needed<1{
+//					return NewRow(iis...)
+//				}
+//			}
+//		}
+//	}
+//	return nil
+//}	
 
 
 func Until[T any](stop func(T) bool, in iter.Seq[T]) iter.Seq[T] {

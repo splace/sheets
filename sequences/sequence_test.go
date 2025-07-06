@@ -142,6 +142,31 @@ func ExampleFibonacci_complex() {
 
 }
 
+func ExampleSub() {
+	fmt.Print(List[int](Sub(Odds[int](),1,3,2,1,10)))
+	// Output:
+	// 1 5 3 1 19
+}
+
+func ExampleSubIter() {
+	fmt.Print(List[int](SubIter(Odds[int](),Limit(Odds[uint](),5))))
+	// Output:
+	// 1 5 9 13 17
+}
+
+func ExampleIndex() {
+	fmt.Print(List[int](Index(Limit(Totalise(Odds[int]()),9))))
+	// Output:
+	// 1 1 2 4 3 9 4 16 5 25 6 36 7 49 8 64 9 81
+}
+
+func ExamplePrefix() {
+	fmt.Print(List[int](Prefix(Geometric(1,1),Limit(Totalise(Odds[int]()),9))))
+	// Output:
+	// 1 1 2 4 3 9 4 16 5 25 6 36 7 49 8 64 9 81
+}
+
+
 func ExampleConcat() {
 	fmt.Print( List[uint](Limit(Concat(Limit(Odds[uint](),4), Evens[uint]()),8)))
 	// Output:

@@ -49,16 +49,16 @@ func (r Row[T]) At(i uint) (d T){
 
 // returns nil if Row ends before a requested item is arrived at. 
 func (r Row[T]) Items(is ...uint) Row[T]{
-	toFind:=len(is)
-	iis:=make([]T,toFind)
+	needed:=len(is)
+	iis:=make([]T,needed)
 	var ci uint
 	for t:=range r{
 		ci++
 		for ii,i:=range is{
 			if i==ci{
 				iis[ii]=t
-				toFind--
-				if toFind<1{
+				needed--
+				if needed<1{
 					return NewRow(iis...)
 				}
 			}
