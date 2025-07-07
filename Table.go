@@ -7,13 +7,12 @@ import "slices"
 import "./lists"
 
 
-type Table[T Row[U],U any] struct{
-	lists.List[T]
+type Table[U any,T Row[U]] lists.List[T]
+
+func NewTable[U any,T Row[U]](rs ...T) Table[U,T]{
+	return Table[U,T](lists.List[T](slices.Values(rs)))
 }
 
-func NewTable[T Row[U],U any](rs ...T) Table[T,U]{
-	return Table[T,U]{lists.List[T](slices.Values(rs))}
-}
 
 //type IndexedRow[T] Row[T]
 

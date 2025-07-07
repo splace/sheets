@@ -44,7 +44,7 @@ func (r Row[T]) At(i uint) (d T){
 	for d=range sequences.After(iter.Seq[T](r),i){
 		break
 	}
-	return 
+	return
 }	
 
 // returns nil if Row ends before a requested item is arrived at. 

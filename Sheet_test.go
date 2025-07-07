@@ -101,7 +101,7 @@ func ExampleSelectMatchedRowsFrom(){
 func ExampleHeadedSheet(){
 	ht:=HeadedSheet[int]{
 		NewRow("age","height","weight"),
-		NewSheet[Row[int]](
+		NewSheet[int](
 			NewRow(1,2,3),
 			NewRow(4,5,6),
 			NewRow(7,8,9),

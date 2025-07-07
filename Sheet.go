@@ -5,17 +5,18 @@ import "iter"
 import "slices"
 import "./sequences"
 
+import "log"
 
 
-type Sheet[T Row[U],U any] struct{
+type Sheet[U any,T Row[U]] struct{
 	Row[T]
 }
 
-func NewSheet[T Row[U],U any](rs ...T) Sheet[T,U]{
-	return Sheet[T,U]{Row[T](slices.Values(rs))}
+func NewSheet[U any,T Row[U]](rs ...T) Sheet[U,T]{
+	return Sheet[U,T]{Row[T](slices.Values(rs))}
 }
 
-func (s Sheet[T,U]) Column(i uint) T{
+func (s Sheet[U,T]) Column(i uint) T{
 	return func(yield func(U) bool) {
 		for r:=range s.Row{
 			if !yield(Row[U](r).At(i-1)){
@@ -25,8 +26,8 @@ func (s Sheet[T,U]) Column(i uint) T{
 	}
 }
 
-func (s Sheet[T,U]) SelectColumns(cs ...uint) Sheet[T,U]{	
-	return Sheet[T,U]{
+func (s Sheet[U,T]) SelectColumns(cs ...uint) Sheet[U,T]{	
+	return Sheet[U,T]{
 		func(yield func(T) bool) {
 			for r:=range s.Row{
 				if !yield(T(Row[U](r).Select(cs...))){
@@ -37,7 +38,7 @@ func (s Sheet[T,U]) SelectColumns(cs ...uint) Sheet[T,U]{
 	}
 }
 
-func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
+func CompareSheets[U comparable,T Row[U]](s1,s2 Sheet[U,T]) bool{
 	next1, stop1 := iter.Pull(iter.Seq[T](s1.Row))
 	next2, stop2 := iter.Pull(iter.Seq[T](s2.Row))
 	defer stop1()
@@ -56,7 +57,7 @@ func CompareSheets[T Row[U],U comparable](s1,s2 Sheet[T,U]) bool{
 }
 
 
-func SelectMatchedRows[T Row[U],U comparable](s Sheet[T,U], match Row[U] ) Sheet[T,U]{	
+func SelectMatchedRows[U comparable,T Row[U]](s Sheet[U,T], match Row[U] ) Sheet[U,T]{	
 	return SelectRowsFunc(s,
 		func(r Row[U])bool{
 			return CompareRows(r,match)
@@ -65,12 +66,12 @@ func SelectMatchedRows[T Row[U],U comparable](s Sheet[T,U], match Row[U] ) Sheet
 }
 
 
-func SelectRows[T Row[U],U comparable](s Sheet[T,U], col uint, v U ) Sheet[T,U]{
+func SelectRows[U comparable,T Row[U]](s Sheet[U,T], col uint, v U ) Sheet[U,T]{
 	return SelectRowsFunc(s,func(r Row[U])bool{return r.At(col)==v})
 }
 
-func SelectRowsFunc[T Row[U],U comparable](s Sheet[T,U], match func(Row[U])bool) Sheet[T,U]{
-	return Sheet[T,U]{
+func SelectRowsFunc[U comparable,T Row[U]](s Sheet[U,T], match func(Row[U])bool) Sheet[U,T]{
+	return Sheet[U,T]{
 		func(yield func(T) bool) {
 			for r:=range s.Row{
 				if match(Row[U](r)) && !yield(r){
@@ -84,12 +85,12 @@ func SelectRowsFunc[T Row[U],U comparable](s Sheet[T,U], match func(Row[U])bool)
 
 type HeadedSheet[U any] struct{
 	Row[string]
-	Sheet[Row[U],U]
+	Sheet[U,Row[U]]
 }
 
 func NewHeadedSheet[T any](ss iter.Seq2[string,T]) HeadedSheet[T]{
 	r,s:=sequences.Split(ss)
-	return HeadedSheet[T]{Row[string](r),NewSheet[Row[T],T](Row[T](s))}
+	return HeadedSheet[T]{Row[string](r),NewSheet[T,Row[T]](Row[T](s))}
 }
 
 func (ht HeadedSheet[T]) Format(s fmt.State, _ rune ){
@@ -119,11 +120,12 @@ type FormattedSheet[U any] struct{
 
 
 
-func SelectRowsFrom[T Row[U],U comparable](f,s Sheet[T,U], col uint, v U ) Sheet[T,U]{
+func SelectRowsFrom[U comparable,G any,T Row[U],F Row[G]](f Sheet[G,F],s Sheet[U,T], col uint, v U ) Sheet[G,F]{
 	return SelectRowsFromFunc(f,s,func(r Row[U])bool{return r.At(col)==v})
 }
 
-func SelectMatchedRowsFrom[T Row[U],U comparable](f,s Sheet[T,U], match Row[U] ) Sheet[T,U]{	
+
+func SelectMatchedRowsFrom[U comparable,G any,T Row[U],F Row[G]](f Sheet[G,F],s Sheet[U,T], match Row[U] ) Sheet[G,F]{	
 	return SelectRowsFromFunc(f,s,
 		func(r Row[U])bool{
 			return CompareRows(r,match)
@@ -131,11 +133,13 @@ func SelectMatchedRowsFrom[T Row[U],U comparable](f,s Sheet[T,U], match Row[U] )
 	)
 }
 
-func SelectRowsFromFunc[T Row[U],U comparable,F Row[G],G any](f Sheet[F,G],s Sheet[T,U], match func(Row[U])bool) Sheet[F,G]{
+func SelectRowsFromFunc[U comparable,G any,T Row[U],F Row[G]](f Sheet[G,F],s Sheet[U,T], match func(Row[U])bool) Sheet[G,F]{
 	var i uint
-	return Sheet[F,G]{
+	return Sheet[G,F]{
 		func(yield func(F) bool) {
 			for r:=range s.Row{
+				log.Print(r)
+				log.Print(match(Row[U](r)))
 				if match(Row[U](r)) && !yield(f.At(i)){
 					return
 				}

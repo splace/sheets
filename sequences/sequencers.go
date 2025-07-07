@@ -57,11 +57,11 @@ func After[T any](ts iter.Seq[T],start uint) iter.Seq[T] {
 }
 
 // return at most a number of elements, from the provided sequence
-func Limit[T any](ts iter.Seq[T],n uint) iter.Seq[T] {
+func Limit[T any, L Integer](ts iter.Seq[T],n L) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		next, stop := iter.Pull(ts)
 		defer stop()
-		for range n{
+		for range int(n){
 			v, ok := next()
 			if !ok || !yield(v) {
 				return

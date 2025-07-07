@@ -3,9 +3,9 @@ package sheets
 import "fmt"
 import "strings"
 
-type Sheets[T Sheet[Row[U],U], U any] map[string]T
+type Sheets[U any,T Sheet[U,Row[U]]] map[string]T
 
-func (ss Sheets[T,U]) String() string{
+func (ss Sheets[U,T]) String() string{
 	var sb strings.Builder
 	for n,s:=range ss{
 		fmt.Fprintf(&sb,"%q\n%v",n,s)
@@ -15,9 +15,9 @@ func (ss Sheets[T,U]) String() string{
 
 
 
-func GroupBy[T Row[U],U comparable](s Sheet[T,U], group func(Row[U])bool) Sheets[Sheet[Row[U],U],U]{
-	return Sheets[Sheet[Row[U],U],U]{
-		"1":Sheet[Row[U],U]{
+func GroupBy[U comparable,T Row[U]](s Sheet[U,T], group func(Row[U])bool) Sheets[U,Sheet[U,Row[U]]]{
+	return Sheets[U,Sheet[U,Row[U]]]{
+		"1":Sheet[U,Row[U]]{
 			func(yield func(Row[U]) bool) {
 				for r:=range s.Row{
 					if group(Row[U](r)) && !yield(Row[U](r)){
@@ -29,11 +29,11 @@ func GroupBy[T Row[U],U comparable](s Sheet[T,U], group func(Row[U])bool) Sheets
 	}
 }
 
-func GroupBy2[T Row[U],U comparable](s Sheet[T,U], matches Row[func(Row[U])bool]) Row[Sheet[T,U]]{
-	return Row[Sheet[T,U]](
-		func(yield func(Sheet[T,U]) bool) {
+func GroupBy2[U comparable,T Row[U]](s Sheet[U,T], matches Row[func(Row[U])bool]) Row[Sheet[U,T]]{
+	return Row[Sheet[U,T]](
+		func(yield func(Sheet[U,T]) bool) {
 			for match:=range matches{
-				if !yield(SelectRowsFunc[T,U](s,match)){
+				if !yield(SelectRowsFunc[U,T](s,match)){
 					return
 				}
 			}
