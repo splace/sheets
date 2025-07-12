@@ -21,7 +21,8 @@ func IsPrime[T Unsigned](n T) bool {
 }
 
 func IsNotPrime[T Unsigned](n T) bool {
-	for i := T(2); i <= Sqrt(n); i += 1 { // can't be divisible above the sqrt, if wasn't below.
+	srn:=Sqrt(n) // can't be divisible above the sqrt, if wasn't below.
+	for i := T(2); i <= srn; i += 1 { 
 		if n%i == 0 {
 			return true
 		}
@@ -46,8 +47,6 @@ func Sqrt[T Unsigned](x T) (r T) {
 	}
 	return
 }
-
-
 
 
 func ExampleLimit() {
@@ -91,6 +90,19 @@ func ExampleUntil() {
 	// Output:
 	// 1 3 5 7 9 11
 }
+
+func ExampleWhile() {
+	fmt.Print( List[uint](While(func(n uint) bool { return n < 10 }, Odds[uint]())))
+	// Output:
+	// 1 3 5 7 9
+}
+
+func ExampleWhile_filter() {
+	fmt.Print(List[uint](While(func(n uint) bool { return n < 20 }, Filter(IsPrime, Odds[uint]()))))
+	// Output:
+	// 1 3 5 7 11 13 17 19
+}
+
 
 func ExampleMultiply() {
 	fmt.Print( List[uint](Limit(Multiply(PrimesAbove[uint](0), 2),10)))
@@ -179,6 +191,21 @@ func ExampleTotalise() {
 	// 1 4 9 16 25 36 49 64 81
 }
 
+func ExampleTotalise_csv() {
+	vs:=fmt.Sprint(List[uint8](Limit(Totalise(Odds[uint8]()),3)))
+	fmt.Println(ToComma(vs))
+	fmt.Println(ToTab(vs))
+	fmt.Print(ToNewline(vs))
+	// Output:
+	// 1,4,9
+	// 1	4	9
+	// 1
+	// 4
+	// 9
+	
+}
+
+
 
 func ExampleRunes() {
 	fmt.Print(List[rune](Runes("hello")))
@@ -186,11 +213,11 @@ func ExampleRunes() {
 	// 104 101 108 108 111
 }
 
-//func ExamplePermutations() {
-//	fmt.Print( List[rune](Permutations(List[string]("ab"))))
-//	// Output:
-//	// 'h' 'e' 'l' 'l' 'o' 'h' 'e' 'l' 'l' 'o'
-//}
+func ExamplePermutations() {
+	fmt.Print(List[rune](Permutations(Runes("ab"))))
+	// Output:
+	// 97 98 194 195 195 196
+}
 
 func ExampleAmalgomate() {
 	fmt.Print( List[string](Amalgomate[rune,string](

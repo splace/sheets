@@ -230,6 +230,16 @@ func SubIter[T any, U Unsigned](s iter.Seq[T], is iter.Seq[U]) iter.Seq[T] {
 //}	
 
 
+func While[T any](is func(T) bool, in iter.Seq[T]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for p := range in {
+			if !is(p) || !yield(p)  {
+				break
+			}
+		}
+	}
+}
+
 func Until[T any](stop func(T) bool, in iter.Seq[T]) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for p := range in {
@@ -253,17 +263,17 @@ func UntilHistory[T any](stop func(...T) bool, in iter.Seq[T])iter.Seq[T] {
 	}
 }
 
-func FilterUntil[T any](selected, stop func(T) bool, in iter.Seq[T])iter.Seq[T] {
-	return func(yield func(T) bool) {
-		for p := range in {
-			if selected(p) {
-				if !yield(p) || stop(p) {
-					break
-				}
-			}
-		}
-	}
-}
+//func FilterUntil[T any](selected, stop func(T) bool, in iter.Seq[T])iter.Seq[T] {
+//	return func(yield func(T) bool) {
+//		for p := range in {
+//			if selected(p) {
+//				if !yield(p) || stop(p) {
+//					break
+//				}
+//			}
+//		}
+//	}
+//}
 
 func Filter[T any](selected func(T) bool, in iter.Seq[T])iter.Seq[T] {
 	return func(yield func(T) bool) {
@@ -276,6 +286,17 @@ func Filter[T any](selected func(T) bool, in iter.Seq[T])iter.Seq[T] {
 		}
 	}
 }
+
+//func FilterWhile[T any](selected func(T) bool, in iter.Seq[T])iter.Seq[T] {
+//	return func(yield func(T) bool) {
+//		for p := range selected(in) {
+//			if !yield(p) {
+//					break
+//			}
+//		}
+//	}
+//}
+
 
 
 func Interlace[T any](ss ...iter.Seq[T]) iter.Seq[T] {
